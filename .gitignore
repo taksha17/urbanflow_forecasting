@@ -1,0 +1,23 @@
+# Virtual Environments
+myenv/
+venv/
+env/
+
+# Python Cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Raw Data & Databases
+# (We ignore these so you don't upload massive files, just the code and final results)
+*.db
+*.parquet
+*.csv
+
+# Exceptions
+# (Allow the final forecast results to be uploaded for your dashboard)
+!forecast_results.csv
+
+# OS generated files
+.DS_Store
+Thumbs.db
