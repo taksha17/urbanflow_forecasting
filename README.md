@@ -7,6 +7,14 @@ Using over 15 million raw NYC Taxi & Limousine Commission (TLC) records, this pr
 
 ### **Key Business Outcomes**
 * **Forecasting Accuracy:** Engineered a gradient-boosted engine (LightGBM) with temporal rolling lags that achieved an **18.09% WAPE**, outperforming standard statistical baselines (ARIMA/Seasonal Naive) by a relative ~27%.
+
+**Baseline: 24.75%**
+
+**LightGBM: 18.09% (Real-time speed)**
+
+**Chronos-T5 (AI): 11.10% (Maximum accuracy)**
+
+
 * **Pricing Elasticity (Causal Inference):** Deployed a Difference-in-Differences (DiD) econometric model to isolate the impact of the February 2019 $2.50 Congestion Surcharge, proving with statistical significance how the targeted price hike impacted Manhattan demand relative to a control group.
 
 ---
