@@ -7,7 +7,7 @@ from lightgbm import LGBMRegressor
 print("Loading data from DuckDB...")
 con = duckdb.connect('urbanflow.db')
 
-# --- 1. Data Extraction ---
+# --- Step 1. Data Extraction ---
 query = """
 WITH TopZones AS (
     SELECT pickup_zone_id, SUM(total_trips) as grand_total
@@ -42,7 +42,7 @@ full_idx = pd.MultiIndex.from_product([all_zones, all_hours], names=['unique_id'
 df = df.set_index(['unique_id', 'ds']).reindex(full_idx, fill_value=0).reset_index()
 
 
-# --- 2. Train/Test Split (Fixing the Pandas Warning) ---
+# --- Step 2. Train/Test Split (Fixing the Pandas Warning) ---
 horizon = 168 
 df = df.sort_values(['unique_id', 'ds'])
 
@@ -53,7 +53,7 @@ train_df = df.drop(test_df.index)
 print(f"Training on {len(train_df)} rows. Testing on {len(test_df)} rows.")
 
 
-# --- 3. Define the ML Engine ---
+# --- Step 3. Define the ML Engine ---
 mlf = MLForecast(
     models=[LGBMRegressor(n_estimators=100, random_state=42, verbose=-1)],
     freq='h',
@@ -62,7 +62,7 @@ mlf = MLForecast(
 )
 
 
-# --- 4. Train and Forecast ---
+# --- Step 4. Train and Forecast ---
 print("Training LightGBM Engine. Watch how fast this is...")
 start_time = time.time()
 
@@ -74,7 +74,7 @@ execution_time = time.time() - start_time
 print(f"ML Forecasting completed in {execution_time:.2f} seconds.")
 
 
-# --- 5. Accuracy Tracking ---
+# --- Step 5. Accuracy Tracking ---
 results_df = forecast_df.merge(test_df, on=['unique_id', 'ds'], how='left')
 
 def calculate_wape(y_true, y_pred):

@@ -8,11 +8,11 @@ import seaborn as sns
 print("Loading daily demand data from DuckDB...")
 con = duckdb.connect('urbanflow.db')
 
-# --- 1. Load Data ---
+# --- Step 1. Load Data ---
 df = con.execute("SELECT * FROM daily_borough_demand").df()
 con.close()
 
-# --- 2. Feature Engineering for Difference-in-Differences ---
+# --- Step 2. Feature Engineering for Difference-in-Differences ---
 # The price hike happened on Feb 2, 2019.
 # Treatment Group: Manhattan (subject to the surcharge)
 # Control Group: Brooklyn (exempt from the surcharge)
@@ -27,7 +27,7 @@ df['is_manhattan'] = (df['borough'] == 'Manhattan').astype(int)
 # This is a classic economics trick so our coefficients represent percentage changes (elasticity).
 df['log_trips'] = np.log(df['total_trips'])
 
-# --- 3. The Econometric Model ---
+# --- Step 3. The Econometric Model ---
 # This formula runs the DiD regression.
 # The interaction term (is_manhattan:is_post_hike) isolates the true Causal Impact.
 print("\nRunning Causal Inference Model (Difference-in-Differences)...")
@@ -43,7 +43,7 @@ percent_change = (np.exp(causal_impact) - 1) * 100
 
 print(f"\n[CAUSAL ESTIMATE]: The $2.50 congestion surcharge caused a {percent_change:.2f}% shift in Manhattan taxi demand relative to the Brooklyn baseline.")
 
-# --- 4. The Executive Visual (Defending the Forecast) ---
+# ---Step 4. The Executive Visual (Defending the Forecast) ---
 print("\nGenerating Executive Dashboard Visual...")
 plt.figure(figsize=(12, 6))
 

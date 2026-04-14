@@ -3,7 +3,7 @@ import urllib.request
 import os
 import time
 
-# --- 1. Download the Raw Data ---
+# --- Step 1. This Step downloads the Raw Data ---
 # We are grabbing Jan 2019. This file is about 110MB and contains ~7.6 million rows.
 DATA_URL = "https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2019-01.parquet"
 RAW_FILE = "yellow_tripdata_2019-01.parquet"
@@ -15,12 +15,12 @@ if not os.path.exists(RAW_FILE):
 else:
     print("Raw file already exists. Skipping download.")
 
-# --- 2. Initialize DuckDB ---
+# --- Step 2. Initializing DuckDB ---
 # This creates a persistent local database file named 'urbanflow.db'
 print("\nConnecting to DuckDB...")
 con = duckdb.connect('urbanflow.db')
 
-# --- 3. The SQL Pipeline ---
+# --- Step 3. The SQL Pipeline ---
 # We aggregate the 7.6 million individual rides into hourly buckets per Taxi Zone.
 # Notice the WHERE clause: TLC data often has broken meters with dates in 2088 or 2001. 
 # We filter strictly for Jan 2019 to ensure data quality.
@@ -53,7 +53,7 @@ con.execute(sql_pipeline)
 execution_time = time.time() - start_time
 print(f"Pipeline finished in {execution_time:.2f} seconds.")
 
-# --- 4. Verify the Results ---
+# --- Step 4. Result Verification ---
 print("\n--- Quick Sanity Check: Top 5 Rows ---")
 preview = con.execute("SELECT * FROM hourly_zone_demand LIMIT 5").df()
 print(preview)
