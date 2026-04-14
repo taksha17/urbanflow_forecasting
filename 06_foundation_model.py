@@ -82,8 +82,20 @@ chronos_df = pd.concat(chronos_forecasts)
 execution_time = time.time() - start_time
 print(f"Foundation Model Forecasting completed in {execution_time:.2f} seconds.")
 
-# --- Step 4. Accuracy Tracking vs. LightGBM ---
-results_df = test_df.merge(chronos_df, on=['unique_id', 'ds'], how='left')
+# --- 4. Combine All Forecasts & Track Accuracy ---
+print("\nMerging Chronos forecasts with previous LightGBM results...")
+
+# Load the previous results that contain the LightGBM forecasts
+previous_results = pd.read_csv('forecast_results.csv')
+previous_results['ds'] = pd.to_datetime(previous_results['ds'])
+
+# THE FIX: Force unique_id to be a string in both dataframes before merging
+previous_results['unique_id'] = previous_results['unique_id'].astype(str)
+chronos_df['unique_id'] = chronos_df['unique_id'].astype(str)
+chronos_df['ds'] = pd.to_datetime(chronos_df['ds'])
+
+# Merge the new Chronos forecasts onto the existing ones
+results_df = previous_results.merge(chronos_df, on=['unique_id', 'ds'], how='left')
 
 def calculate_wape(y_true, y_pred):
     if y_true.sum() == 0: return 0
@@ -96,5 +108,6 @@ print("Baseline (Seasonal Naive): ~24.75%")
 print("Machine Learning (LightGBM): ~18.09%")
 print(f"Foundation Model (Chronos-T5): {chronos_wape:.2f}%")
 
+# Save the final 3-way comparison!
 results_df.to_csv('final_forecasts.csv', index=False)
-print("Saved 3-way comparison to 'final_forecasts.csv'")
+print("Saved complete 3-way comparison to 'final_forecasts.csv'")
