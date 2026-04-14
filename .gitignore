@@ -17,6 +17,7 @@ __pycache__/
 # Exceptions
 # (Allow the final forecast results to be uploaded for your dashboard)
 !forecast_results.csv
+!final_forecasts.csv
 
 # OS generated files
 .DS_Store
